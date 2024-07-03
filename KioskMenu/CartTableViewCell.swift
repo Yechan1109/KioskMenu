@@ -1,7 +1,7 @@
 import UIKit
 
 
-// 델리게이트 프로토콜 정의
+// 델리게이트를 위한 프로토콜 정의
 protocol CartTableViewCellDelegate: AnyObject {
     func didUpdateQuantity(on cell: CartTableViewCell, quantity: Int)
     func didTapRemoveButton(on cell: CartTableViewCell)
@@ -16,6 +16,7 @@ class CartTableViewCell: UITableViewCell {
 //    static let identifier = "CartTableViewCell"
     
     weak var delegate: CartTableViewCellDelegate?
+    
     private var quantity: Int = 1 {
             didSet {
                 quantityLabel.text = "\(quantity)"
