@@ -1,6 +1,6 @@
 import UIKit
 
-class MenuViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class MenuViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CartTableViewCellDelegate {
     
     private let categories = ["베스트", "탕", "사이드", "소주/맥주", "음료"]
     private var selectedCategory: String = "베스트"
@@ -66,6 +66,17 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
         return button
     }()
     
+    private let clearAllButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("전체 삭제", for: .normal)
+        button.layer.cornerRadius = 10
+        button.layer.borderWidth = 2
+        button.layer.borderColor = UIColor.systemBlue.cgColor
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 18)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "스파르탕"
@@ -82,13 +93,18 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
         view.addSubview(segmentedControl)
         view.addSubview(collectionView)
         view.addSubview(cartView)
-//        view.addSubview(totalPriceLabel)
         
         cartView.addSubview(cartTableView)
         cartView.addSubview(totalPriceLabel)
         cartView.addSubview(checkoutButton)
         
         setupConstraints()
+        
+        // 전체삭제용
+        view.addSubview(clearAllButton)
+        setupClearAllButtonConstraints()
+        clearAllButton.addTarget(self, action: #selector(clearAllButtonTapped), for: .touchUpInside)
+        
     }
     
     private func setupConstraints() {
@@ -112,17 +128,13 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
             cartTableView.trailingAnchor.constraint(equalTo: cartView.trailingAnchor),
             cartTableView.bottomAnchor.constraint(equalTo: totalPriceLabel.topAnchor, constant: -10),
             
-//            totalPriceLabel.leadingAnchor.constraint(equalTo: cartView.leadingAnchor, constant: 120),
             totalPriceLabel.trailingAnchor.constraint(equalTo: cartView.trailingAnchor, constant: -20),
             totalPriceLabel.bottomAnchor.constraint(equalTo: checkoutButton.topAnchor, constant: -10),
-//            totalPriceLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-//            totalPriceLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -300),
-            
             
             checkoutButton.leadingAnchor.constraint(equalTo: cartView.leadingAnchor, constant: 20),
             checkoutButton.trailingAnchor.constraint(equalTo: cartView.trailingAnchor, constant: -20),
             checkoutButton.bottomAnchor.constraint(equalTo: cartView.bottomAnchor, constant: -10),
-            checkoutButton.heightAnchor.constraint(equalToConstant: 50)
+            checkoutButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
     
@@ -152,12 +164,28 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     private func updateTotalPrice() {
-        let totalPrice = cartItems.reduce(0) { $0 + $1.price }
+        let totalPrice = cartItems.reduce(0) { $0 + $1.price * $1.quantity }
         totalPriceLabel.text = "총 \(cartItems.count)개 결제: \(totalPrice)원"
     }
     
+    // 전체 삭제 버튼 제약 및 동작 세팅
+    private func setupClearAllButtonConstraints() {
+        NSLayoutConstraint.activate([
+            clearAllButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -2),
+            clearAllButton.bottomAnchor.constraint(equalTo: cartView.topAnchor, constant: -2),
+            clearAllButton.widthAnchor.constraint(equalToConstant: 80),
+            clearAllButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
+    }
     
-        
+    @objc private func clearAllButtonTapped() {
+        cartItems.removeAll()
+        updateTotalPrice()
+        cartTableView.reloadData()
+    }
+    
+    
+    
     
     
     
@@ -172,6 +200,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CartCell", for: indexPath) as! CartTableViewCell
         cell.configure(with: cartItems[indexPath.row])
+        cell.delegate = self // removebutton을 위한 델리게이터 설정
         return cell
     }
     
@@ -183,9 +212,21 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    // 메뉴 수량 변경
+    func didUpdateQuantity(on cell: CartTableViewCell, quantity: Int) {
+        guard let indexPath = cartTableView.indexPath(for: cell) else { return }
+        cartItems[indexPath.row].quantity = quantity
+        cartTableView.reloadRows(at: [indexPath], with: .none)
+        updateTotalPrice()
+    }
     
-    
-    
+    // 메뉴 삭제
+    func didTapRemoveButton(on cell: CartTableViewCell) {
+        guard let indexPath = cartTableView.indexPath(for: cell) else { return }
+        cartItems.remove(at: indexPath.row)
+        cartTableView.deleteRows(at: [indexPath], with: .automatic)
+        updateTotalPrice()
+    }
     
     
 }

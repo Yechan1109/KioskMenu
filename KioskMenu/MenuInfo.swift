@@ -4,5 +4,5 @@ struct MenuItem {
     let subtitle: String
     let category: String
     let price: Int
-    let quantity: Int
+    var quantity: Int
 }
