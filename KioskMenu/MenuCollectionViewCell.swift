@@ -3,10 +3,10 @@ import UIKit
 class MenuCollectionViewCell: UICollectionViewCell {
     
     private let imageView: UIImageView = {
-        let iv = UIImageView()
-        iv.contentMode = .scaleAspectFit
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        return iv
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     private let titleLabel: UILabel = {
@@ -47,11 +47,10 @@ class MenuCollectionViewCell: UICollectionViewCell {
             subtitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
         ])
     }
-    
+        
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     func configure(with item: MenuItem) {
         imageView.image = UIImage(named: item.imageName)

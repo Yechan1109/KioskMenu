@@ -8,10 +8,17 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
     private let categories = ["베스트", "탕", "사이드", "소주/맥주", "음료"]
     private var selectedCategory: String = "베스트" // 초기 위치 설정값 지정
     private var cartItems: [MenuItem] = []  // 장바구니 담기
-    
     private var menuItems: [MenuItem] = [
         MenuItem(imageName: "amuk", title: "오뎅탕", subtitle: "9000원", category: "탕", price: 9000, quantity: 1),
         MenuItem(imageName: "image2", title: "새우탕", subtitle: "8000원", category: "탕", price: 8000, quantity: 1),
+        MenuItem(imageName: "image3", title: "진로", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
+        MenuItem(imageName: "image3", title: "테라", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
+        MenuItem(imageName: "image3", title: "카스", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
+        MenuItem(imageName: "image3", title: "진로", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
+        MenuItem(imageName: "image3", title: "참이슬", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
+        MenuItem(imageName: "image3", title: "테라", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
+        MenuItem(imageName: "image3", title: "카스", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
+        MenuItem(imageName: "image3", title: "참이슬", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
         MenuItem(imageName: "image3", title: "진로", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
         MenuItem(imageName: "image3", title: "테라", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
         MenuItem(imageName: "image3", title: "카스", subtitle: "4000원", category: "소주/맥주", price: 4000, quantity: 1),
@@ -31,6 +38,7 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
         layout.scrollDirection = .vertical
         layout.itemSize = CGSize(width: 100, height: 120) // 각 아이템 사이즈 설정
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(MenuCollectionViewCell.self, forCellWithReuseIdentifier: "MenuCell") // 셀 위치에 들어갈 커스텀 MenuCollectionViewCell 등록
         return collectionView
@@ -38,7 +46,7 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     private let cartView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray6 // layout 확인차
+//        view.backgroundColor = .systemGray6 // layout 확인차
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.lightGray.cgColor
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -47,7 +55,7 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     private let cartTableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(CartTableViewCell.self, forCellReuseIdentifier: "CartCell") /// 셀 위치에 들어갈 커스텀 CartTableViewCell 등록
+        tableView.register(CartTableViewCell.self, forCellReuseIdentifier: "CartCell") // 셀 위치에 들어갈 커스텀 CartTableViewCell 등록
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.isScrollEnabled = true
         return tableView
@@ -108,6 +116,9 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
         setupClearAllButtonConstraints()
         clearAllButton.addTarget(self, action: #selector(clearAllButtonTapped), for: .touchUpInside)
         
+
+        
+        
     }
 // MARK: - 제약 세팅
     private func setupConstraints() {
@@ -119,7 +130,7 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
             collectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            collectionView.bottomAnchor.constraint(equalTo: cartView.topAnchor, constant: -10),
+            collectionView.bottomAnchor.constraint(equalTo: cartView.topAnchor, constant: -40),
             
             cartView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             cartView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -177,10 +188,10 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
     // 전체 총 주문 가격 계싼
     private func updateTotalPrice() {
         let totalPrice = cartItems.reduce(0) { $0 + $1.price * $1.quantity }
-        totalPriceLabel.text = "총 \(cartItems.count)개 결제: \(totalPrice)원"
+        totalPriceLabel.text = "총 메뉴 \(cartItems.count)개 결제: \(totalPrice)원"
     }
     
-    // 전체 삭제 버튼 제약 및 동작 세팅 -> 왜 setupConstraints로 합치면 충돌이나지? 결국 따로 뺴서 작업함..
+    // 전체 삭제 버튼 제약 및 동작 세팅 -> 왜 setupConstraints로 합치면 충돌이나지? ㅇㄴ결국 따로 뺴서 작업함..
     private func setupClearAllButtonConstraints() {
         NSLayoutConstraint.activate([
             clearAllButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -2),
@@ -199,10 +210,7 @@ class MenuViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     
     
-    
-    
 }
-
 
 // MARK: - 재사용성을 위한 모듈화와 가독성을 위해 분리하여 코드 작성함
 extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
@@ -220,6 +228,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         cell.delegate = self // removebutton을 위한 델리게이터 설정
         return cell
     }
+    
     // tableview엣허 행 삭제 동작 기능
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -237,6 +246,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         updateTotalPrice()
     }
     
+    
     // 메뉴 삭제
     func didTapRemoveButton(on cell: CartTableViewCell) {
         guard let indexPath = cartTableView.indexPath(for: cell) else { return }
@@ -244,6 +254,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         cartTableView.deleteRows(at: [indexPath], with: .automatic) // 테이블 뷰에서 해당 행을 애니메이션과 함께 삭제
         updateTotalPrice()
     }
+    
     
     
 }

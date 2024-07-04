@@ -7,20 +7,16 @@ protocol CartTableViewCellDelegate: AnyObject {
     func didTapRemoveButton(on cell: CartTableViewCell)
 }
 
-
 // 장바구니 Area에 포함된 내용 세팅
 class CartTableViewCell: UITableViewCell {
     
-    
-    
-//    static let identifier = "CartTableViewCell"
-    
     weak var delegate: CartTableViewCellDelegate?
     
-    private var quantity: Int = 1 {
+    private var quantity: Int = 1
+    {
             didSet {
                 quantityLabel.text = "\(quantity)"
-                delegate?.didUpdateQuantity(on: self, quantity: quantity)
+//                delegate?.didUpdateQuantity(on: self, quantity: quantity)
             }
         }
     
@@ -31,7 +27,7 @@ class CartTableViewCell: UITableViewCell {
         return label
     }()
     
-    private let minusButton: UIButton = {
+    let minusButton: UIButton = {
         let button = UIButton()
         button.setTitle("-", for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
@@ -39,7 +35,7 @@ class CartTableViewCell: UITableViewCell {
         return button
     }()
     
-    private let plusButton: UIButton = {
+    let plusButton: UIButton = {
         let button = UIButton()
         button.setTitle("+", for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
@@ -47,7 +43,7 @@ class CartTableViewCell: UITableViewCell {
         return button
     }()
     
-    private let quantityLabel: UILabel = {
+    let quantityLabel: UILabel = {
         let label = UILabel()
         label.text = "1"
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -64,7 +60,7 @@ class CartTableViewCell: UITableViewCell {
         return label
     }()
     
-    private let removeButton: UIButton = {
+    let removeButton: UIButton = {
         let button = UIButton()
         button.setTitle("X", for: .normal)
         button.setTitleColor(.red, for: .normal)
@@ -85,7 +81,6 @@ class CartTableViewCell: UITableViewCell {
         // 버튼 액션 추가
         minusButton.addTarget(self, action: #selector(minusButtonTapped), for: .touchUpInside)
         plusButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
-
         // removeButton 액션 추가
         removeButton.addTarget(self, action: #selector(removeButtonTapped), for: .touchUpInside)
     }
@@ -93,7 +88,7 @@ class CartTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -101,15 +96,12 @@ class CartTableViewCell: UITableViewCell {
             
             minusButton.trailingAnchor.constraint(equalTo: quantityLabel.leadingAnchor, constant: 0),
             minusButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            minusButton.widthAnchor.constraint(equalToConstant: 30),
             
             quantityLabel.trailingAnchor.constraint(equalTo: plusButton.leadingAnchor, constant: 0),
             quantityLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            quantityLabel.widthAnchor.constraint(equalToConstant: 30),
             
             plusButton.trailingAnchor.constraint(equalTo: priceLabel.leadingAnchor, constant: 0),
             plusButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            plusButton.widthAnchor.constraint(equalToConstant: 30),
             
             priceLabel.trailingAnchor.constraint(equalTo: removeButton.leadingAnchor, constant: -8),
             priceLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -129,44 +121,18 @@ class CartTableViewCell: UITableViewCell {
     @objc private func minusButtonTapped() {
         if quantity > 1 {
             quantity -= 1
+            print("-", quantity)
         }
     }
 
     @objc private func plusButtonTapped() {
         quantity += 1
+        print("+", quantity)
     }
 
     @objc private func removeButtonTapped() {
         delegate?.didTapRemoveButton(on: self)
     }
-//
-//    func configure(with menuItem: MenuItem) {
-//            titleLabel.text = menuItem.title
-//            priceLabel.text = "\(menuItem.price * menuItem.quantity)원"
-//            quantity = menuItem.quantity
-//            quantityLabel.text = "\(quantity)"
-//        }
-//        
-//    @objc private func minusButtonTapped() {
-//        if quantity > 1 {
-//            quantity -= 1
-//        }
-//    }
-//    
-//    @objc private func plusButtonTapped() {
-//        quantity += 1
-//    }
-//    
-//    @objc private func removeButtonTapped() {
-//        delegate?.didTapRemoveButton(on: self)
-//    }
-    
-    
-    
-    
-    
-    
-    
     
 }
 
